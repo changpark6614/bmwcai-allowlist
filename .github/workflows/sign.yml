@@ -1,0 +1,36 @@
+name: sign-allowlist
+
+on:
+  push:
+    branches: [main]
+    paths: [verified.json]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sign-allowlist
+  cancel-in-progress: false
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "cryptography>=41"
+      - name: Sign verified.json -> allowlist.json
+        env:
+          ALLOWLIST_SIGNING_KEY: ${{ secrets.ALLOWLIST_SIGNING_KEY }}
+        run: python sign.py
+      - name: Commit allowlist.json
+        run: |
+          if git diff --quiet -- allowlist.json; then echo "no change"; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add allowlist.json
+          git commit -m "sign allowlist"
+          git push
