@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "serial": 1,
+  "issued": "2026-11-16",
+  "engine": {
+    "v1.4.0": "6d4928e6dca9812e7882318afdd7cba9840c2d62",
+    "v1.3.1": "1d3ba60a9aa8a79fe16e1c26488a89918ec1d928",
+    "v1.2.0": "c56ccee40753d6a09ed346d7761c066ddee3f16c"
+  },
+  "revoked": [],
+  "app": {
+    "latest": "1.2.3",
+    "url": "https://cafe.naver.com/codingbmw",
+    "note": "BMW Custom App Installer 1.2.3 — SSH 엔진 v1.4.0, 파란 화면 복구, 차종 자동 확인"
+  }
+}
