@@ -26,6 +26,12 @@ def check(data: bytes) -> dict:
     for t in doc.get("revoked") or []:
         if not (isinstance(t, str) and TAG.match(t)):
             sys.exit("verified.json: revoked 항목 형식 오류: %r" % t)
+    rec = doc.get("recommend")
+    if rec not in (None, ""):
+        if not (isinstance(rec, str) and rec in (doc.get("engine") or {})):
+            sys.exit("verified.json: recommend %r 는 engine 목록에 있는 태그여야 합니다" % (rec,))
+        if rec in (doc.get("revoked") or []):
+            sys.exit("verified.json: recommend %r 가 revoked 에도 있습니다" % (rec,))
     return doc
 
 
@@ -48,8 +54,8 @@ def main():
     env = json.dumps({"payload": base64.b64encode(data).decode("ascii"), "sig": sig}, indent=1) + "\n"
     open("allowlist.json", "w", encoding="ascii", newline="\n").write(env)
     pub = key.public_key().public_bytes(serialization.Encoding.Raw, serialization.PublicFormat.Raw)
-    print("signed serial %d, engines %s, revoked %s, public key %s" % (
-        doc["serial"], ", ".join(sorted(doc.get("engine") or {})) or "-",
+    print("signed serial %d, engines %s, recommend %s, revoked %s, public key %s" % (
+        doc["serial"], ", ".join(sorted(doc.get("engine") or {})) or "-", doc.get("recommend") or "-",
         ", ".join(doc.get("revoked") or []) or "-", base64.b64encode(pub).decode()))
 
 
